@@ -1,0 +1,184 @@
+basePath: /api
+definitions:
+  main.DiagnosticRecord:
+    properties:
+      date:
+        type: string
+      diagnosis:
+        type: string
+      hospital:
+        type: string
+      specialist:
+        type: string
+    type: object
+  main.Patient:
+    properties:
+      age:
+        type: integer
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  main.Record:
+    properties:
+      diagnosticRecords:
+        items:
+          $ref: '#/definitions/main.DiagnosticRecord'
+        type: array
+      patient:
+        $ref: '#/definitions/main.Patient'
+      treatmentRecords:
+        items:
+          $ref: '#/definitions/main.TreatmentRecord'
+        type: array
+      visitRecords:
+        items:
+          $ref: '#/definitions/main.VisitRecord'
+        type: array
+    type: object
+  main.TreatmentRecord:
+    properties:
+      date:
+        type: string
+      hospital:
+        type: string
+      outcome:
+        type: string
+      treatment:
+        type: string
+    type: object
+  main.VisitRecord:
+    properties:
+      date:
+        type: string
+      doctorName:
+        type: string
+      hospital:
+        type: string
+      reason:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server for managing medical records.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Medical Records API
+  version: "1.0"
+paths:
+  /patients/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a patient's details by ID.
+      operationId: get-patient-by-id
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.Patient'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get patient by ID
+  /records:
+    post:
+      consumes:
+      - application/json
+      description: Add a new record for a patient.
+      operationId: add-record
+      parameters:
+      - description: Record
+        in: body
+        name: record
+        required: true
+        schema:
+          $ref: '#/definitions/main.Record'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/main.Record'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Add a new record
+  /search:
+    get:
+      consumes:
+      - application/json
+      description: Search patient records by patient ID or hospital.
+      operationId: search-patient-records
+      parameters:
+      - description: Patient ID
+        in: query
+        name: patientId
+        type: string
+      - description: Hospital
+        in: query
+        name: hospital
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/main.Record'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Search patient records
+swagger: "2.0"
